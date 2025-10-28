@@ -19,9 +19,9 @@ contract BountyV1 {
     enum Category {
         Development,
         Design,
-        Writing, 
+        Writing,
         Marketing,
-        Research 
+        Research
     }
     enum ApplicationStatus {
         PENDING,
@@ -151,4 +151,30 @@ contract BountyV1 {
         // Store it under that bountyId
         applications[bountyId].push(newApp);
     }
+
+    function returnBountyId() public view returns (uint256) {
+        return nextBountyId;
+    }
+
+
+function loadBounties(uint256[] memory _bountyIds) 
+    public 
+    view 
+    returns (Bounty[] memory) 
+{
+    require(_bountyIds.length > 0, "No bounty IDs provided");
+    require(_bountyIds.length < 10, "More than 10 is not allowed");
+
+
+    Bounty[] memory chosenBounties = new Bounty[](_bountyIds.length);
+
+    for (uint256 i = 0; i < _bountyIds.length; i++) {
+        chosenBounties[i] = bounties[_bountyIds[i]];
+    }
+
+    return chosenBounties;
+}
+
+
+    
 }

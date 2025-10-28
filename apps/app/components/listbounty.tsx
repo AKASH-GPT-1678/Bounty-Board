@@ -4,6 +4,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
+import { useWallet } from "../context/walletcontext";
+import { ethers } from "ethers";
+import { BOUNTY_ABI } from "./abi";
+
 enum Category {
     Development = "Development",
     Design = "Design",
@@ -12,7 +16,7 @@ enum Category {
     Research = "Research",
 }
 
-// 🧩 Zod Schema
+
 const bountySchema = z.object({
     _title: z.string().min(3, "Title must be at least 3 characters"),
     _description: z.string().min(10, "Description must be at least 10 characters"),
@@ -31,6 +35,8 @@ type BountyFormData = z.infer<typeof bountySchema>;
 
 export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormData) => void }) {
     const [submitButton, setSubmitButton] = React.useState(false);
+
+    const { connected, signer, contract, setContract } = useWallet();
     const {
         register,
         handleSubmit,
@@ -38,18 +44,94 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
     } = useForm<BountyFormData>({
         resolver: zodResolver(bountySchema),
     });
+    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
-    const submitForm = (data: BountyFormData) => {
+    const submitForm = async (data: BountyFormData) => {
         setSubmitButton(!submitButton);
         const formattedData = {
             ...data,
-            _deadline: new Date(data._deadline).getTime(), // convert to timestamp
+            _deadline: 20,
+            _category: 10,
             _bountyAmount: Number(data._bountyAmount),
         };
+        console.log("Formatted Data:", formattedData);
 
-        console.log("✅ Final Form Data:", formattedData);
+
+
+
+        // setSubmitButton(false);
+        toast.success(
+            "Bounty created successfully!",
+
+        )
+
+
+
 
     };
+
+    async function sampleTransaction() {
+        try {
+            // 1️⃣ Get provider (Metamask)
+            console.log(signer);
+
+
+            const bountyData4 = {
+                title: "Promote Our NFT Collection",
+                description: "Plan and execute a social media campaign for our new NFT drop",
+                expectation: "Campaign plan, KPIs, and daily social engagement tracking",
+                imageUrl: "https://example.com/nft-marketing.png",
+                category: 3, // Marketing
+                deadline: Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60, // 3 days
+                bountyAmount: ethers.parseEther("0.012"),
+            };
+
+            // 5️⃣ Research bounty
+            const bountyData5 = {
+                title: "Research DeFi Yield Strategies",
+                description: "Analyze yield-optimizing protocols and create a comparison report",
+                expectation: "Accurate data and detailed risk assessment",
+                imageUrl: "https://example.com/defi-research.png",
+                category: 4, // Research
+                deadline: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 14 days
+                bountyAmount: ethers.parseEther("0.02"),
+            };
+
+            // 6️⃣ Development bounty
+            const bountyData6 = {
+                title: "Build a Solidity Gas Optimizer",
+                description: "Develop a tool to analyze and optimize smart contract gas usage",
+                expectation: "CLI + Web dashboard version with test cases",
+                imageUrl: "https://example.com/gas-optimizer.png",
+                category: 0, // Development
+                deadline: Math.floor(Date.now() / 1000) + 9 * 24 * 60 * 60, // 9 days
+                bountyAmount: ethers.parseEther("0.018"),
+            };
+
+            // 4️⃣ Call the createBounty function
+            const tx = await contract?.createBounty(
+                bountyData6.title,
+                bountyData6.description,
+                bountyData6.expectation,
+                bountyData6.imageUrl,
+                bountyData6.category,
+                bountyData6.deadline,
+                bountyData6.bountyAmount,
+                {
+                    value: bountyData6.bountyAmount // since payable
+                }
+            );
+
+            console.log("Transaction sent:", tx.hash);
+
+            // 5️⃣ Wait for confirmation
+            const receipt = await tx.wait();
+            console.log("✅ Bounty created successfully:", receipt);
+        } catch (err) {
+            console.error("❌ Error creating bounty:", err);
+        }
+    }
+
 
     React.useEffect(() => {
         console.log("Form Errors:", errors);
@@ -59,12 +141,19 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
         }
     }, [submitButton, errors]);
 
+    React.useEffect(() => {
+        if (signer) {
+            const votingContract = new ethers.Contract(contractAddress as string, BOUNTY_ABI, signer);
+            setContract(votingContract);
+        }
+    }, [signer]);
+
     return (
         <div className="max-w-lg mx-auto bg-white shadow-md rounded-2xl p-6 border border-gray-200">
             <h2 className="text-2xl font-bold mb-6 text-center">Create New Bounty</h2>
 
             <form onSubmit={handleSubmit(submitForm)} className="space-y-5">
-                {/* Title */}
+
                 <div>
                     <label className="block text-sm font-medium mb-1">Title</label>
                     <input
@@ -76,7 +165,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                     {errors._title && <p className="text-red-500 text-sm mt-1">{errors._title.message}</p>}
                 </div>
 
-                {/* Description */}
+
                 <div>
                     <label className="block text-sm font-medium mb-1">Description</label>
                     <textarea
@@ -89,7 +178,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                     )}
                 </div>
 
-                {/* Expectation */}
+
                 <div>
                     <label className="block text-sm font-medium mb-1">Expectation</label>
                     <textarea
@@ -102,7 +191,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                     )}
                 </div>
 
-                {/* Image URL */}
+
                 <div>
                     <label className="block text-sm font-medium mb-1">Image URL</label>
                     <input
@@ -116,7 +205,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                     )}
                 </div>
 
-                {/* Category */}
+
                 <div>
                     <label className="block text-sm font-medium mb-1">Category</label>
                     <select
@@ -171,6 +260,11 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                     Create Bounty
                 </button>
             </form>
+
+
+            <button onClick={sampleTransaction}>
+                Smaple Bounty
+            </button>
         </div>
     );
 }

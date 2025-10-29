@@ -114,7 +114,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                 imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761723866/kh5x9dppfijjnxlcweeb.png",
                 category: 3, // Marketing
                 deadline: Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60, // 3 days
-                bountyAmount: ethers.parseEther("0.012"),
+                bountyAmount: "0.01", // ETH value (as string)
             };
 
             const bountyData5 = {
@@ -138,16 +138,16 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
             };
 
         // Convert bounty amount to Wei
-                    const bountyAmountWei = ethers.parseEther(bountyData5.bountyAmount);
+                    const bountyAmountWei = ethers.parseEther(bountyData4.bountyAmount);
         
                     try {
                         const tx = await contract?.createBounty(
-                            bountyData5.title,
-                            bountyData5.description,
-                            bountyData5.expectation,
-                            bountyData5.imageUrl,
-                            bountyData5.category,
-                            bountyData5.deadline,
+                            bountyData4.title,
+                            bountyData4.description,
+                            bountyData4.expectation,
+                            bountyData4.imageUrl,
+                            bountyData4.category,
+                            bountyData4.deadline,
                             bountyAmountWei,
                             { value: bountyAmountWei } // send ETH value to contract
                         );

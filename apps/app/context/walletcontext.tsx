@@ -3,6 +3,12 @@ import { ethers } from "ethers";
 import React from "react";
 import { BOUNTY_ABI } from "../components/abi";
 
+
+declare global {
+    interface Window {
+        ethereum: any;
+    }
+}
 type WalletContextType = {
     signer: ethers.Signer | null;
     address: string | null;

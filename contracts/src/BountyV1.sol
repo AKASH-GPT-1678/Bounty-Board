@@ -156,25 +156,22 @@ contract BountyV1 {
         return nextBountyId;
     }
 
-
-function loadBounties(uint256[] memory _bountyIds) 
-    public 
-    view 
-    returns (Bounty[] memory) 
-{
-    require(_bountyIds.length > 0, "No bounty IDs provided");
-    require(_bountyIds.length < 10, "More than 10 is not allowed");
-
-
-    Bounty[] memory chosenBounties = new Bounty[](_bountyIds.length);
-
-    for (uint256 i = 0; i < _bountyIds.length; i++) {
-        chosenBounties[i] = bounties[_bountyIds[i]];
+    function getBounty(uint256 _bountyId) public view returns (Bounty memory) {
+        return bounties[_bountyId];
     }
 
-    return chosenBounties;
-}
+    function loadBounties(
+        uint256[] memory _bountyIds
+    ) public view returns (Bounty[] memory) {
+        require(_bountyIds.length > 0, "No bounty IDs provided");
+        require(_bountyIds.length < 10, "More than 10 is not allowed");
 
+        Bounty[] memory chosenBounties = new Bounty[](_bountyIds.length);
 
-    
+        for (uint256 i = 0; i < _bountyIds.length; i++) {
+            chosenBounties[i] = bounties[_bountyIds[i]];
+        }
+
+        return chosenBounties;
+    }
 }

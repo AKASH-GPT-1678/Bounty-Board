@@ -70,67 +70,104 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
 
     };
 
-    async function sampleTransaction() {
+        async function sampleTransaction() {
         try {
             // 1️⃣ Get provider (Metamask)
             console.log(signer);
 
 
+
+            const bountyData1 = {
+                title: "Smart Contract Security Audit",
+                description: "Review our NFT smart contract for potential vulnerabilities and suggest fixes.",
+                expectation: "Detailed audit report, recommendations, and validation of fixes.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761723866/kh5x9dppfijjnxlcweeb.png",
+                category: 1, // Development
+                deadline: Math.floor(Date.now() / 1000) + 5 * 24 * 60 * 60, // 5 days
+                bountyAmount: ethers.parseEther("0.025"),
+            };
+
+            const bountyData2 = {
+                title: "UI/UX Design for NFT Dashboard",
+                description: "Design a modern and user-friendly dashboard for our NFT management platform.",
+                expectation: "Figma designs, color palette, and interaction flow.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761724014/xpth248abjcy5roeqof5.jpg",
+                category: 2, // Design
+                deadline: Math.floor(Date.now() / 1000) + 4 * 24 * 60 * 60, // 4 days
+                bountyAmount: ethers.parseEther("0.02"),
+            };
+
+            const bountyData3 = {
+                title: "Community Engagement Manager",
+                description: "Grow and moderate our Discord and Telegram community channels.",
+                expectation: "Engagement tracking, weekly reports, and feedback collection.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761723929/jhbxjuhwavhnk5im7bhf.jpg",
+                category: 4, // Community
+                deadline: Math.floor(Date.now() / 1000) + 6 * 24 * 60 * 60, // 6 days
+                bountyAmount: ethers.parseEther("0.018"),
+            };
+
             const bountyData4 = {
-                title: "Promote Our NFT Collection",
-                description: "Plan and execute a social media campaign for our new NFT drop",
-                expectation: "Campaign plan, KPIs, and daily social engagement tracking",
-                imageUrl: "https://example.com/nft-marketing.png",
+                title: "Marketing Campaign for NFT Drop",
+                description: "Plan and execute a full social media campaign for our upcoming NFT release.",
+                expectation: "Campaign roadmap, influencer plan, and engagement analytics.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761723866/kh5x9dppfijjnxlcweeb.png",
                 category: 3, // Marketing
                 deadline: Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60, // 3 days
                 bountyAmount: ethers.parseEther("0.012"),
             };
 
-            // 5️⃣ Research bounty
             const bountyData5 = {
-                title: "Research DeFi Yield Strategies",
-                description: "Analyze yield-optimizing protocols and create a comparison report",
-                expectation: "Accurate data and detailed risk assessment",
-                imageUrl: "https://example.com/defi-research.png",
-                category: 4, // Research
-                deadline: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 14 days
-                bountyAmount: ethers.parseEther("0.02"),
+                title: "3D NFT Artwork Design",
+                description: "Create a high-quality 3D digital art piece for our next NFT series.",
+                expectation: "Original 3D model files and rendered previews in multiple resolutions.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1760341910/ov2jjlkawkcebfe6xpi0.jpg",
+                category: 2, // Design
+                deadline: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
+                bountyAmount: "0.002", // ETH value (as string)
             };
 
-            // 6️⃣ Development bounty
             const bountyData6 = {
-                title: "Build a Solidity Gas Optimizer",
-                description: "Develop a tool to analyze and optimize smart contract gas usage",
-                expectation: "CLI + Web dashboard version with test cases",
-                imageUrl: "https://example.com/gas-optimizer.png",
-                category: 0, // Development
-                deadline: Math.floor(Date.now() / 1000) + 9 * 24 * 60 * 60, // 9 days
-                bountyAmount: ethers.parseEther("0.018"),
+                title: "Backend Integration for Marketplace",
+                description: "Integrate NFT marketplace backend with smart contracts using Node.js and Express.",
+                expectation: "Functional API endpoints, contract calls, and deployment guide.",
+                imageUrl: "https://res.cloudinary.com/dffepahvl/image/upload/v1761723976/atib2d5oqio3hxru5guj.jpg",
+                category: 0, // Development (depends on your enum index)
+                deadline: Math.floor(Date.now() / 1000) + 5 * 24 * 60 * 60, // +5 days
+                bountyAmount: "0.001", // ETH value (as string)
             };
 
-            // 4️⃣ Call the createBounty function
-            const tx = await contract?.createBounty(
-                bountyData6.title,
-                bountyData6.description,
-                bountyData6.expectation,
-                bountyData6.imageUrl,
-                bountyData6.category,
-                bountyData6.deadline,
-                bountyData6.bountyAmount,
-                {
-                    value: bountyData6.bountyAmount // since payable
+        // Convert bounty amount to Wei
+                    const bountyAmountWei = ethers.parseEther(bountyData5.bountyAmount);
+        
+                    try {
+                        const tx = await contract?.createBounty(
+                            bountyData5.title,
+                            bountyData5.description,
+                            bountyData5.expectation,
+                            bountyData5.imageUrl,
+                            bountyData5.category,
+                            bountyData5.deadline,
+                            bountyAmountWei,
+                            { value: bountyAmountWei } // send ETH value to contract
+                        );
+        
+                        console.log("Transaction sent:", tx.hash);
+        
+                        const receipt = await tx.wait();
+                        console.log("✅ Bounty created successfully:", receipt);
+        
+                    } catch (err) {
+                        console.error("❌ Error creating bounty:", err);
+                    }
+                
+        
+                } catch (err) {
+                    console.error("Sample transaction error:", err);
                 }
-            );
+            }
 
-            console.log("Transaction sent:", tx.hash);
 
-            // 5️⃣ Wait for confirmation
-            const receipt = await tx.wait();
-            console.log("✅ Bounty created successfully:", receipt);
-        } catch (err) {
-            console.error("❌ Error creating bounty:", err);
-        }
-    }
 
 
     React.useEffect(() => {
@@ -152,7 +189,7 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
         <div className="max-w-lg mx-auto bg-white shadow-md rounded-2xl p-6 border border-gray-200">
             <h2 className="text-2xl font-bold mb-6 text-center">Create New Bounty</h2>
 
-            <form onSubmit={handleSubmit(submitForm)} className="space-y-5">
+            {/* <form onSubmit={handleSubmit(submitForm)} className="space-y-5">
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Title</label>
@@ -225,46 +262,48 @@ export default function BountyForm({ onSubmit }: { onSubmit?: (data: BountyFormD
                 </div>
 
                 {/* Deadline */}
-                <div>
-                    <label className="block text-sm font-medium mb-1">Deadline</label>
-                    <input
-                        type="date"
-                        {...register("_deadline")}
-                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    {errors._deadline && (
-                        <p className="text-red-500 text-sm mt-1">{errors._deadline.message}</p>
-                    )}
-                </div>
+            <div>
+                <label className="block text-sm font-medium mb-1">Deadline</label>
+                <input
+                    type="date"
+                    {...register("_deadline")}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+                {errors._deadline && (
+                    <p className="text-red-500 text-sm mt-1">{errors._deadline.message}</p>
+                )}
+            </div>
 
-                {/* Bounty Amount */}
-                <div>
-                    <label className="block text-sm font-medium mb-1">Bounty Amount</label>
-                    <input
-                        type="number"
-                        step="0.01"
-                        {...register("_bountyAmount")}
-                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        placeholder="Enter bounty amount"
-                    />
-                    {errors._bountyAmount && (
-                        <p className="text-red-500 text-sm mt-1">{errors._bountyAmount.message}</p>
-                    )}
-                </div>
-
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white font-semibold rounded-lg py-2 hover:bg-blue-700 transition"
-                >
-                    Create Bounty
-                </button>
-            </form>
+            {/* Bounty Amount */}
+            <div>
+                <label className="block text-sm font-medium mb-1">Bounty Amount</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    {...register("_bountyAmount")}
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Enter bounty amount"
+                />
+                {errors._bountyAmount && (
+                    <p className="text-red-500 text-sm mt-1">{errors._bountyAmount.message}</p>
+                )}
+            </div>
 
 
-            <button onClick={sampleTransaction}>
+            <button
+                type="submit"
+                className="w-full bg-blue-600 text-white font-semibold rounded-lg py-2 hover:bg-blue-700 transition"
+            >
+                Create Bounty
+            </button>
+            {/* </form> */}
+
+
+            <button onClick={sampleTransaction} >
                 Smaple Bounty
             </button>
         </div>
     );
-}
+
+
+};

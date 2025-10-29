@@ -16,9 +16,8 @@ export default function ViewBoutines() {
         const tx = await contract?.loadBounties(randomArray);
 
         console.log(tx[0]);
-        console.log(tx[1]);
-        console.log(tx[2]);
-        setBoutines(tx[0][5]);
+
+
 
         const bountiess = tx.map((item: any) => ({
             image: item[4],
@@ -36,7 +35,7 @@ export default function ViewBoutines() {
 
     React.useEffect(() => {
         if (contract) {
-            getBoutines(6);
+            getBoutines(1);
         }
 
     }, [contract])
@@ -45,10 +44,10 @@ export default function ViewBoutines() {
     return (
         <div>
             <h1>View Boutines</h1>
-        
+
             <div>
                 {
-                     boutines && 
+                    boutines &&
                     boutines.map((boutine: any, index: number) => (
                         <div key={index}>
                             <img src={boutine.image} alt={boutine.name} />
